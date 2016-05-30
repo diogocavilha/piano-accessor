@@ -92,4 +92,14 @@ class AccessorTraitTest extends \PHPUnit_Framework_TestCase
         $this->assertInternalType('array', $this->mock->getArrayValue(), 'Value must be array');
         $this->assertInternalType('object', $this->mock->getObjectValue(), 'Value must be object');
     }
+
+    /**
+     * @test
+     */
+    public function itCanRunTypeCastBeforeSettingAValue()
+    {
+        $this->mock->setCastInt('50');
+        $this->assertSame(50, $this->mock->getCastInt());
+        $this->assertInternalType('int', $this->mock->getCastInt(), 'Value must be int');
+    }
 }

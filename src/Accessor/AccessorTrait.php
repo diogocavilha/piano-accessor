@@ -14,6 +14,17 @@ use ReflectionProperty;
 trait AccessorTrait
 {
     private $methods = [];
+    private $supportedTypes = [
+        'int',
+        'integer',
+        'bool',
+        'boolean',
+        'float',
+        'double',
+        'string',
+        'array',
+        'object',
+    ];
 
     public function __construct()
     {
@@ -50,7 +61,7 @@ trait AccessorTrait
         $method = 'set' . ucfirst($attribute);
 
         $closure = function ($param) use ($attribute, $hint, $method) {
-            if (!is_null($hint) && !($param instanceof $hint)) {
+            if (!is_null($hint) && !($param instanceof $hint) && !in_array($hint, $this->supportedTypes)) {
                 throw new \Exception(
                     sprintf(
                         'Argument 1 passed to %s::%s must be an instance of %s, %s given',
@@ -60,6 +71,10 @@ trait AccessorTrait
                         is_object($param) ? get_class($param) : gettype($param)
                     )
                 );
+            }
+
+            if (in_array($hint, $this->supportedTypes)) {
+                settype($param, $hint);
             }
 
             $this->$attribute = $param;
@@ -126,18 +141,6 @@ trait AccessorTrait
 
     private function getTypeCastToReturn($doc)
     {
-        $supportedTypes = [
-            'int',
-            'integer',
-            'bool',
-            'boolean',
-            'float',
-            'double',
-            'string',
-            'array',
-            'object',
-        ];
-
         preg_match('/@get.*/', $doc, $matches);
 
         $annotationParts = explode(' ', $matches[0]);
@@ -148,7 +151,7 @@ trait AccessorTrait
             $type = $annotationParts[1];
         }
 
-        if (!is_null($type) && !in_array($type, $supportedTypes)) {
+        if (!is_null($type) && !in_array($type, $this->supportedTypes)) {
             throw new Exception(sprintf('%s is not a valid type', $type));
         }
 

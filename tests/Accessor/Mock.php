@@ -43,6 +43,12 @@ class Mock
     private $attributeDateTime;
 
     /**
+     * @set int
+     * @get
+     */
+    private $castInt;
+
+    /**
      * @get int
      */
     private $intValue = 50;
