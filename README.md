@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/diogocavilha/array-validation.svg?branch=master)](https://travis-ci.org/diogocavilha/array-validation)
+[![Build Status](https://travis-ci.org/diogocavilha/piano-accessor.svg?branch=master)](https://travis-ci.org/diogocavilha/piano-accessor)
 [![Latest Stable Version](https://img.shields.io/packagist/v/piano/accessor.svg?style=flat-square)](https://packagist.org/packages/piano/accessor)
 
 # Piano Accessor
