@@ -43,12 +43,6 @@ class Mock
     private $attributeDateTime;
 
     /**
-     * @set int
-     * @get
-     */
-    private $castInt;
-
-    /**
      * @get int
      */
     private $intValue = 50;
@@ -92,4 +86,58 @@ class Mock
      * @get object
      */
     private $objectValue = 50;
+
+    /**
+     * @set int
+     * @get
+     */
+    private $castInt;
+
+    /**
+     * @set integer
+     * @get
+     */
+    private $castInteger;
+
+    /**
+     * @set bool
+     * @get
+     */
+    private $castBool;
+
+    /**
+     * @set boolean
+     * @get
+     */
+    private $castBoolean;
+
+    /**
+     * @set float
+     * @get
+     */
+    private $castFloat;
+
+    /**
+     * @set double
+     * @get
+     */
+    private $castDouble;
+
+    /**
+     * @set string
+     * @get
+     */
+    private $castString;
+
+    /**
+     * @set array
+     * @get
+     */
+    private $castArray;
+
+    /**
+     * @set object
+     * @get
+     */
+    private $castObject;
 }
