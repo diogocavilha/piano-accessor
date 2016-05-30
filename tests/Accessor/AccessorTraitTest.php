@@ -76,4 +76,20 @@ class AccessorTraitTest extends \PHPUnit_Framework_TestCase
         $this->mock->setAttributeDateTime($expected);
         $this->assertInstanceOf($expectedNamespace, $this->mock->getAttributeDateTime(), 'Expected value must be ' . $expectedNamespace);
     }
+
+    /**
+     * @test
+     */
+    public function itCanRunTypeCastBeforeReturningAValue()
+    {
+        $this->assertInternalType('int', $this->mock->getIntValue(), 'Value must be int');
+        $this->assertInternalType('integer', $this->mock->getIntegerValue(), 'Value must be integer');
+        $this->assertInternalType('bool', $this->mock->getBoolValue(), 'Value must be bool');
+        $this->assertInternalType('boolean', $this->mock->getBooleanValue(), 'Value must be boolean');
+        $this->assertInternalType('float', $this->mock->getFloatValue(), 'Value must be float');
+        $this->assertInternalType('double', $this->mock->getDoubleValue(), 'Value must be double');
+        $this->assertInternalType('string', $this->mock->getStringValue(), 'Value must be string');
+        $this->assertInternalType('array', $this->mock->getArrayValue(), 'Value must be array');
+        $this->assertInternalType('object', $this->mock->getObjectValue(), 'Value must be object');
+    }
 }

@@ -41,4 +41,49 @@ class Mock
      * @get
      */
     private $attributeDateTime;
+
+    /**
+     * @get int
+     */
+    private $intValue = 50;
+
+    /**
+     * @get integer
+     */
+    private $integerValue = 50;
+
+    /**
+     * @get bool
+     */
+    private $boolValue = 50;
+
+    /**
+     * @get boolean
+     */
+    private $booleanValue = 50;
+
+    /**
+     * @get float
+     */
+    private $floatValue = 50;
+
+    /**
+     * @get double
+     */
+    private $doubleValue = 50;
+
+    /**
+     * @get string
+     */
+    private $stringValue = 50;
+
+    /**
+     * @get array
+     */
+    private $arrayValue = 50;
+
+    /**
+     * @get object
+     */
+    private $objectValue = 50;
 }

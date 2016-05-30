@@ -74,11 +74,17 @@ trait AccessorTrait
             return;
         }
 
-        $closure = function () use ($attribute) {
+        $method = 'get' . ucfirst($attribute);
+        $typeCast = $this->getTypeCastToReturn($doc);
+
+        $closure = function () use ($attribute, $typeCast) {
+            if (!is_null($typeCast)) {
+                settype($this->$attribute, $typeCast);
+            }
+
             return $this->$attribute;
         };
 
-        $method = 'get' . ucfirst($attribute);
         $this->methods[$method] = Closure::bind($closure, $this, get_class());
     }
 
@@ -116,5 +122,36 @@ trait AccessorTrait
         }
 
         return null;
+    }
+
+    private function getTypeCastToReturn($doc)
+    {
+        $supportedTypes = [
+            'int',
+            'integer',
+            'bool',
+            'boolean',
+            'float',
+            'double',
+            'string',
+            'array',
+            'object',
+        ];
+
+        preg_match('/@get.*/', $doc, $matches);
+
+        $annotationParts = explode(' ', $matches[0]);
+
+        $type = null;
+
+        if (count($annotationParts) > 1) {
+            $type = $annotationParts[1];
+        }
+
+        if (!is_null($type) && !in_array($type, $supportedTypes)) {
+            throw new Exception(sprintf('%s is not a valid type', $type));
+        }
+
+        return $type;
     }
 }
