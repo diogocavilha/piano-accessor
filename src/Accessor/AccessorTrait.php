@@ -3,6 +3,7 @@
 namespace Piano;
 
 use Closure;
+use Exception;
 use ReflectionClass;
 use ReflectionProperty;
 
@@ -29,6 +30,14 @@ trait AccessorTrait
         if (isset($this->methods[$method]) && is_callable($this->methods[$method])) {
             return call_user_func_array($this->methods[$method], $args);
         }
+
+        throw new Exception(
+            sprintf(
+                'Call to undefined method %s::%s()',
+                get_class($this),
+                $method
+            )
+        );
     }
 
     private function createSetter($attribute, $doc)
@@ -37,12 +46,26 @@ trait AccessorTrait
             return;
         }
 
-        $newMethod = function ($param) use ($attribute) {
+        $hint = $this->getHint($doc);
+        $method = 'set' . ucfirst($attribute);
+
+        $closure = function ($param) use ($attribute, $hint, $method) {
+            if (!is_null($hint) && !($param instanceof $hint)) {
+                throw new \Exception(
+                    sprintf(
+                        'Argument 1 passed to %s::%s must be an instance of %s, %s given',
+                        __CLASS__,
+                        $method,
+                        $hint,
+                        is_object($param) ? get_class($param) : gettype($param)
+                    )
+                );
+            }
+
             $this->$attribute = $param;
         };
 
-        $method = 'set' . ucfirst($attribute);
-        $this->methods[$method] = Closure::bind($newMethod, $this, get_class());
+        $this->methods[$method] = Closure::bind($closure, $this, get_class());
     }
 
     private function createGetter($attribute, $doc)
@@ -51,12 +74,12 @@ trait AccessorTrait
             return;
         }
 
-        $newMethod = function () use ($attribute) {
+        $closure = function () use ($attribute) {
             return $this->$attribute;
         };
 
         $method = 'get' . ucfirst($attribute);
-        $this->methods[$method] = Closure::bind($newMethod, $this, get_class());
+        $this->methods[$method] = Closure::bind($closure, $this, get_class());
     }
 
     private function getAnnotations()
@@ -80,5 +103,18 @@ trait AccessorTrait
     {
         preg_match('/@get/', $doc, $matches);
         return count($matches) >= 1;
+    }
+
+    private function getHint($doc)
+    {
+        preg_match('/@set.*/', $doc, $matches);
+
+        $annotationParts = explode(' ', $matches[0]);
+
+        if (count($annotationParts) > 1) {
+            return $annotationParts[1];
+        }
+
+        return null;
     }
 }

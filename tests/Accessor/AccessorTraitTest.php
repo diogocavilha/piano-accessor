@@ -15,11 +15,24 @@ class AccessorTraitTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @expectedException Exception
      */
-    public function itShouldNotCreateGetterAndSetterWhenThereIsNoAnnotations()
+    public function itMustNotCreateGetterWhenThereIsNoAnnotation()
     {
-        $this->mock->setNonGetterAndSetter('test');
-        $this->assertNull($this->mock->getNonGetterAndSetter());
+        $this->mock->setNonGetter('test');
+        $this->mock->getNonGetter();
+    }
+
+    /**
+     * @test
+     * @expectedException Exception
+     */
+    public function itMustNotCreateSetterWhenThereIsNoAnnotation()
+    {
+        $expected = 'foo';
+        $this->mock->nonSetter = $expected;
+        $this->assertEquals($expected, $this->mock->getNonSetter());
+        $this->mock->setNonSetter('bar');
     }
 
     /**
@@ -29,5 +42,38 @@ class AccessorTraitTest extends \PHPUnit_Framework_TestCase
     {
         $this->mock->setGetterAndSetterSimple('test');
         $this->assertEquals('test', $this->mock->getGetterAndSetterSimple(), 'Expected value must be test');
+    }
+
+    /**
+     * @test
+     */
+    public function itCanCreateGetterAndSetterWithTypeHint()
+    {
+        $expectedNamespace = '\stdClass';
+        $expected = new $expectedNamespace();
+        $this->mock->setAttributeStdClass($expected);
+        $this->assertInstanceOf($expectedNamespace, $this->mock->getAttributeStdClass(), 'Expected value must be ' . $expectedNamespace);
+    }
+
+    /**
+     * @test
+     */
+    public function itCanCreateSetterForAnyNamespaceAsHint()
+    {
+        $expectedNamespace = '\Tests\AnyNamespace';
+        $expected = new $expectedNamespace();
+        $this->mock->setAttributeAnyNamespace($expected);
+        $this->assertInstanceOf($expectedNamespace, $this->mock->getAttributeAnyNamespace(), 'Expected value must be ' . $expectedNamespace);
+    }
+
+    /**
+     * @test
+     */
+    public function itCanCreateSetterForDateTime()
+    {
+        $expectedNamespace = '\DateTime';
+        $expected = new $expectedNamespace();
+        $this->mock->setAttributeDateTime($expected);
+        $this->assertInstanceOf($expectedNamespace, $this->mock->getAttributeDateTime(), 'Expected value must be ' . $expectedNamespace);
     }
 }
