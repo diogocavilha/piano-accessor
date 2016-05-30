@@ -26,18 +26,10 @@ trait AccessorTrait
         'object',
     ];
 
-    public function __construct()
-    {
-        $annotations = $this->getAnnotations();
-
-        foreach ($annotations as $attribute => $doc) {
-            $this->createSetter($attribute, $doc);
-            $this->createGetter($attribute, $doc);
-        }
-    }
-
     public function __call($method, $args)
     {
+        $this->createMethods();
+
         if (isset($this->methods[$method]) && is_callable($this->methods[$method])) {
             return call_user_func_array($this->methods[$method], $args);
         }
@@ -51,7 +43,17 @@ trait AccessorTrait
         );
     }
 
-    private function createSetter($attribute, $doc)
+    final private function createMethods()
+    {
+        $annotations = $this->getAnnotations();
+
+        foreach ($annotations as $attribute => $doc) {
+            $this->createSetter($attribute, $doc);
+            $this->createGetter($attribute, $doc);
+        }
+    }
+
+    final private function createSetter($attribute, $doc)
     {
         if (!$this->canSet($doc)) {
             return;
@@ -80,10 +82,10 @@ trait AccessorTrait
             $this->$attribute = $param;
         };
 
-        $this->methods[$method] = Closure::bind($closure, $this, get_class());
+        $this->addClosure($method, $closure);
     }
 
-    private function createGetter($attribute, $doc)
+    final private function createGetter($attribute, $doc)
     {
         if (!$this->canGet($doc)) {
             return;
@@ -100,10 +102,15 @@ trait AccessorTrait
             return $this->$attribute;
         };
 
+        $this->addClosure($method, $closure);
+    }
+
+    final private function addClosure($method, $closure)
+    {
         $this->methods[$method] = Closure::bind($closure, $this, get_class());
     }
 
-    private function getAnnotations()
+    final private function getAnnotations()
     {
         $annotations = [];
         $properties = (new ReflectionClass(get_class($this)))->getProperties();
@@ -114,19 +121,19 @@ trait AccessorTrait
         return $annotations;
     }
 
-    private function canSet($doc)
+    final private function canSet($doc)
     {
         preg_match('/@set/', $doc, $matches);
         return count($matches) >= 1;
     }
 
-    private function canGet($doc)
+    final private function canGet($doc)
     {
         preg_match('/@get/', $doc, $matches);
         return count($matches) >= 1;
     }
 
-    private function getHint($doc)
+    final private function getHint($doc)
     {
         preg_match('/@set.*/', $doc, $matches);
 
@@ -139,7 +146,7 @@ trait AccessorTrait
         return null;
     }
 
-    private function getTypeCastToReturn($doc)
+    final private function getTypeCastToReturn($doc)
     {
         preg_match('/@get.*/', $doc, $matches);
 
