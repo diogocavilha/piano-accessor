@@ -1,6 +1,14 @@
+[![Build Status](https://travis-ci.org/diogocavilha/array-validation.svg?branch=master)](https://travis-ci.org/diogocavilha/array-validation)
+
 # Piano Accessor
 
 This package allows us to create getters and setters just by using a few annotations.
+
+# Installing
+
+```sh
+composer require piano/accessor
+```
 
 See the example:
 
