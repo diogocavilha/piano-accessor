@@ -10,6 +10,8 @@ This package allows us to create getters and setters just by using a few annotat
 composer require piano/accessor
 ```
 
+# Usage example
+
 See the example:
 
 This `User` class:
