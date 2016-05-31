@@ -93,3 +93,19 @@ class User
 
 As you can see it's possible to specify the type hint or type cast when defining the `@set` and it's also possible to specify the type cast when defining the `@get`.
 That's optional though.
+
+As below:
+
+| Setting      | Getting       |
+|--------------|-------------- |
+| @set int     | @get int      |
+| @set integer | @get integer  |
+| @set bool    | @get bool     |
+| @set boolean | @get boolean  |
+| @set float   | @get float    |
+| @set double  | @get double   |
+| @set string  | @get string   |
+| @set array   | @get array    |
+| @set object  | @get object   |
+
+For `@set` any other value will be treated as type hint.
