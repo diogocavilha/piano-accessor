@@ -1,0 +1,9 @@
+version: '2'
+
+services:
+    php:
+        image: nmcteam/php56
+        volumes:
+            - ./docker/php-fpm.conf:/etc/php5/fpm/php-fpm.conf
+            - .:/www
+
