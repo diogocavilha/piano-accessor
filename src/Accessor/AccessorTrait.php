@@ -2,13 +2,9 @@
 
 namespace Piano;
 
-use Closure;
-use Exception;
-use ReflectionClass;
-use ReflectionProperty;
-
 /**
  * This trait allows us to generate authomatic getters and setters only by using simple annotations.
+ *
  * @author Diogo Alexsander Cavilha <diogocavilha@gmail.com>
  */
 trait AccessorTrait
@@ -34,7 +30,7 @@ trait AccessorTrait
             return call_user_func_array($this->methods[$method], $args);
         }
 
-        throw new Exception(
+        throw new \Exception(
             sprintf(
                 'Call to undefined method %s::%s()',
                 get_class($this),
@@ -107,15 +103,15 @@ trait AccessorTrait
 
     final private function addClosure($method, $closure)
     {
-        $this->methods[$method] = Closure::bind($closure, $this, get_class());
+        $this->methods[$method] = \Closure::bind($closure, $this, get_class());
     }
 
     final private function getAnnotations()
     {
         $annotations = [];
-        $properties = (new ReflectionClass(get_class($this)))->getProperties();
+        $properties = (new \ReflectionClass(get_class($this)))->getProperties();
         foreach ($properties as $property) {
-            $annotations[$property->name] = (new ReflectionProperty(get_class($this), $property->name))->getDocComment();
+            $annotations[$property->name] = (new \ReflectionProperty(get_class($this), $property->name))->getDocComment();
         }
 
         return $annotations;
@@ -159,7 +155,7 @@ trait AccessorTrait
         }
 
         if (!is_null($type) && !in_array($type, $this->supportedTypes)) {
-            throw new Exception(sprintf('%s is not a valid type', $type));
+            throw new \Exception(sprintf('%s is not a valid type', $type));
         }
 
         return $type;
