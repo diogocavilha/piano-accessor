@@ -2,8 +2,7 @@ version: '2'
 
 services:
     php:
-        image: nmcteam/php56
+        image: tuxmate/php:7.1
         volumes:
-            - ./docker/php-fpm.conf:/etc/php5/fpm/php-fpm.conf
             - .:/www
 
