@@ -12,14 +12,10 @@ trait AccessorTrait
     private $methods = [];
     private $supportedTypes = [
         'int',
-        'integer',
         'bool',
-        'boolean',
         'float',
-        'double',
         'string',
         'array',
-        'object',
     ];
 
     public function __call($method, $args)
@@ -88,12 +84,42 @@ trait AccessorTrait
         }
 
         $method = 'get' . ucfirst($attribute);
-        $typeCast = $this->getTypeCastToReturn($doc);
+        $returnType = $this->getReturnType($doc);
 
-        $closure = function () use ($attribute, $typeCast) {
-            if (!is_null($typeCast)) {
-                settype($this->$attribute, $typeCast);
-            }
+        if ('int' === $returnType) {
+            return $this->addClosure($method, function () use ($attribute, $returnType): int {
+                return (int) $this->$attribute;
+            });
+        }
+
+        if ('bool' === $returnType) {
+            return $this->addClosure($method, function () use ($attribute, $returnType): bool {
+                return (bool) $this->$attribute;
+            });
+        }
+
+        if ('float' === $returnType) {
+            return $this->addClosure($method, function () use ($attribute, $returnType): float {
+                return (float) $this->$attribute;
+            });
+        }
+
+        if ('string' === $returnType) {
+            return $this->addClosure($method, function () use ($attribute, $returnType): string {
+                return $this->$attribute;
+            });
+        }
+
+        if ('array' === $returnType) {
+            return $this->addClosure($method, function () use ($attribute, $returnType): array {
+                return $this->$attribute;
+            });
+        }
+
+        $closure = function () use ($attribute/*, $returnType*/) {
+            // if (!is_null($returnType)) {
+            //     settype($this->$attribute, $returnType);
+            // }
 
             return $this->$attribute;
         };
@@ -142,7 +168,7 @@ trait AccessorTrait
         return null;
     }
 
-    final private function getTypeCastToReturn($doc)
+    final private function getReturnType($doc)
     {
         preg_match('/@get.*/', $doc, $matches);
 

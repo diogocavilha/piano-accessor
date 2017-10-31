@@ -48,29 +48,14 @@ class Mock
     private $intValue = 50;
 
     /**
-     * @get integer
-     */
-    private $integerValue = 50;
-
-    /**
      * @get bool
      */
     private $boolValue = 50;
 
     /**
-     * @get boolean
-     */
-    private $booleanValue = 50;
-
-    /**
      * @get float
      */
     private $floatValue = 50;
-
-    /**
-     * @get double
-     */
-    private $doubleValue = 50;
 
     /**
      * @get string
@@ -80,12 +65,7 @@ class Mock
     /**
      * @get array
      */
-    private $arrayValue = 50;
-
-    /**
-     * @get object
-     */
-    private $objectValue = 50;
+    private $arrayValue = [];
 
     /**
      * @set int
@@ -94,22 +74,10 @@ class Mock
     private $castInt;
 
     /**
-     * @set integer
-     * @get
-     */
-    private $castInteger;
-
-    /**
      * @set bool
      * @get
      */
     private $castBool;
-
-    /**
-     * @set boolean
-     * @get
-     */
-    private $castBoolean;
 
     /**
      * @set float

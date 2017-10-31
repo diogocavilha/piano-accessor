@@ -3,182 +3,149 @@
 namespace Tests\Acessor;
 
 use Tests\Mock;
+use Piano\AccessorTrait;
 
 class AccessorTraitTest extends \PHPUnit\Framework\TestCase
 {
-    private $mock;
-
-    public function setUp()
+    public function testItCanSetIntAndGetInt()
     {
-        $this->mock = new Mock();
+        $user = new class
+        {
+            use AccessorTrait;
+
+            /**
+             * @set int
+             * @get int
+             */
+            private $age;
+        };
+
+        $expected = 42;
+        $user->setAge($expected);
+
+        $this->assertEquals($expected, $user->getAge());
+        $this->assertInternalType('int', $user->getAge());
+    }
+
+    public function testItCanSetBoolAndGetBool()
+    {
+        $user = new class
+        {
+            use AccessorTrait;
+
+            /**
+             * @set bool
+             * @get bool
+             */
+            private $active;
+        };
+
+        $expected = false;
+        $user->setActive($expected);
+
+        $actual = $user->getActive();
+
+        $this->assertEquals($expected, $actual);
+        $this->assertInternalType('bool', $actual);
+        $this->assertFalse($actual);
+
+        $expected = true;
+        $user->setActive($expected);
+
+        $actual = $user->getActive();
+
+        $this->assertEquals($expected, $actual);
+        $this->assertInternalType('bool', $actual);
+        $this->assertTrue($actual);
+    }
+
+    public function testItCanSetFloatAndGetFloat()
+    {
+        $user = new class
+        {
+            use AccessorTrait;
+
+            /**
+             * @set float
+             * @get float
+             */
+            private $weight;
+        };
+
+        $expected = 72.56;
+        $user->setWeight($expected);
+
+        $this->assertEquals($expected, $user->getWeight());
+        $this->assertInternalType('float', $user->getWeight());
+    }
+
+    public function testItCanSetStringAndGetString()
+    {
+        $user = new class
+        {
+            use AccessorTrait;
+
+            /**
+             * @set string
+             * @get string
+             */
+            private $name;
+        };
+
+        $expected = 'Diogo';
+        $user->setName($expected);
+
+        $actual = $user->getName();
+
+        $this->assertEquals($expected, $actual);
+        $this->assertInternalType('string', $actual);
+    }
+
+    public function testItCanSetArrayAndGetArray()
+    {
+        $user = new class
+        {
+            use AccessorTrait;
+
+            /**
+             * @set array
+             * @get array
+             */
+            private $phones;
+        };
+
+        $expected = [5555555, 9999999];
+        $user->setPhones($expected);
+
+        $actual = $user->getPhones();
+
+        $this->assertEquals($expected, $actual);
+        $this->assertInternalType('array', $actual);
+        $this->assertArraySubset($expected, $actual);
     }
 
     /**
-     * @test
-     * @expectedException Exception
+     * Implement return type
      */
-    public function itMustNotCreateGetterWhenThereIsNoAnnotation()
+    public function testItCanSetDateTimeAndGetDateTime()
     {
-        $this->mock->setNonGetter('test');
-        $this->mock->getNonGetter();
-    }
+        $obj = new class
+        {
+            use AccessorTrait;
 
-    /**
-     * @test
-     * @expectedException Exception
-     */
-    public function itMustNotCreateSetterWhenThereIsNoAnnotation()
-    {
-        $expected = 'foo';
-        $this->mock->nonSetter = $expected;
-        $this->assertEquals($expected, $this->mock->getNonSetter());
-        $this->mock->setNonSetter('bar');
-    }
+            /**
+             * @set DateTime
+             * @get
+             */
+            private $date;
+        };
 
-    /**
-     * @test
-     */
-    public function itCanCreateSimpleGetterAndSetter()
-    {
-        $this->mock->setGetterAndSetterSimple('test');
-        $this->assertEquals('test', $this->mock->getGetterAndSetterSimple(), 'Expected value must be test');
-    }
+        $expected = new \DateTime();
+        $obj->setDate($expected);
 
-    /**
-     * @test
-     */
-    public function itCanCreateGetterAndSetterWithTypeHint()
-    {
-        $expectedNamespace = '\stdClass';
-        $expected = new $expectedNamespace();
-        $this->mock->setAttributeStdClass($expected);
-        $this->assertInstanceOf($expectedNamespace, $this->mock->getAttributeStdClass(), 'Expected value must be ' . $expectedNamespace);
-    }
+        $actual = $obj->getDate();
 
-    /**
-     * @test
-     */
-    public function itCanCreateSetterForAnyNamespaceAsHint()
-    {
-        $expectedNamespace = '\Tests\AnyNamespace';
-        $expected = new $expectedNamespace();
-        $this->mock->setAttributeAnyNamespace($expected);
-        $this->assertInstanceOf($expectedNamespace, $this->mock->getAttributeAnyNamespace(), 'Expected value must be ' . $expectedNamespace);
-    }
-
-    /**
-     * @test
-     */
-    public function itCanCreateSetterForDateTime()
-    {
-        $expectedNamespace = '\DateTime';
-        $expected = new $expectedNamespace();
-        $this->mock->setAttributeDateTime($expected);
-        $this->assertInstanceOf($expectedNamespace, $this->mock->getAttributeDateTime(), 'Expected value must be ' . $expectedNamespace);
-    }
-
-    /**
-     * @test
-     */
-    public function itCanRunTypeCastBeforeReturningAValue()
-    {
-        $this->assertInternalType('int', $this->mock->getIntValue(), 'Value must be int');
-        $this->assertInternalType('integer', $this->mock->getIntegerValue(), 'Value must be integer');
-        $this->assertInternalType('bool', $this->mock->getBoolValue(), 'Value must be bool');
-        $this->assertInternalType('boolean', $this->mock->getBooleanValue(), 'Value must be boolean');
-        $this->assertInternalType('float', $this->mock->getFloatValue(), 'Value must be float');
-        $this->assertInternalType('double', $this->mock->getDoubleValue(), 'Value must be double');
-        $this->assertInternalType('string', $this->mock->getStringValue(), 'Value must be string');
-        $this->assertInternalType('array', $this->mock->getArrayValue(), 'Value must be array');
-        $this->assertInternalType('object', $this->mock->getObjectValue(), 'Value must be object');
-    }
-
-    /**
-     * @test
-     */
-    public function itCanRunTypeCastIntBeforeSettingAValue()
-    {
-        $this->mock->setCastInt('50');
-        $this->assertSame(50, $this->mock->getCastInt());
-        $this->assertInternalType('int', $this->mock->getCastInt(), 'Value must be int');
-    }
-
-    /**
-     * @test
-     */
-    public function itCanRunTypeCastIntegerBeforeSettingAValue()
-    {
-        $this->mock->setCastInteger('50');
-        $this->assertSame(50, $this->mock->getCastInteger());
-        $this->assertInternalType('integer', $this->mock->getCastInteger(), 'Value must be integer');
-    }
-
-    /**
-     * @test
-     */
-    public function itCanRunTypeCastBoolBeforeSettingAValue()
-    {
-        $this->mock->setCastBool('50');
-        $this->assertSame(true, $this->mock->getCastBool());
-        $this->assertInternalType('bool', $this->mock->getCastBool(), 'Value must be bool');
-    }
-
-    /**
-     * @test
-     */
-    public function itCanRunTypeCastBooleanBeforeSettingAValue()
-    {
-        $this->mock->setCastBoolean('50');
-        $this->assertSame(true, $this->mock->getCastBoolean());
-        $this->assertInternalType('boolean', $this->mock->getCastBoolean(), 'Value must be boolean');
-    }
-
-    /**
-     * @test
-     */
-    public function itCanRunTypeCastFloatBeforeSettingAValue()
-    {
-        $this->mock->setCastFloat('50');
-        $this->assertSame((float) 50, $this->mock->getCastFloat());
-        $this->assertInternalType('float', $this->mock->getCastFloat(), 'Value must be float');
-    }
-
-    /**
-     * @test
-     */
-    public function itCanRunTypeCastDoubleBeforeSettingAValue()
-    {
-        $this->mock->setCastDouble('50');
-        $this->assertSame((double) 50, $this->mock->getCastDouble());
-        $this->assertInternalType('double', $this->mock->getCastDouble(), 'Value must be double');
-    }
-
-    /**
-     * @test
-     */
-    public function itCanRunTypeCastStringBeforeSettingAValue()
-    {
-        $this->mock->setCastString('50');
-        $this->assertSame('50', $this->mock->getCastString());
-        $this->assertInternalType('string', $this->mock->getCastString(), 'Value must be string');
-    }
-
-    /**
-     * @test
-     */
-    public function itCanRunTypeCastArrayBeforeSettingAValue()
-    {
-        $this->mock->setCastArray('50');
-        $this->assertSame(['50'], $this->mock->getCastArray());
-        $this->assertInternalType('array', $this->mock->getCastArray(), 'Value must be array');
-    }
-
-    /**
-     * @test
-     */
-    public function itCanRunTypeCastObjectBeforeSettingAValue()
-    {
-        $this->mock->setCastObject('50');
-        $this->assertInternalType('object', $this->mock->getCastObject(), 'Value must be object');
+        $this->assertEquals($expected, $actual);
+        $this->assertInstanceOf('\DateTime', $actual);
     }
 }
