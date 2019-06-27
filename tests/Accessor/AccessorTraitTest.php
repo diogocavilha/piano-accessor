@@ -4,7 +4,7 @@ namespace Tests;
 
 use Tests\Mock;
 
-class AccessorTraitTest extends \PHPUnit_Framework_TestCase
+class AccessorTraitTest extends \PHPUnit\Framework\TestCase
 {
     private $mock;
 
